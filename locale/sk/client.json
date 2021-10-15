@@ -128,10 +128,12 @@
   "signin.message.email": "Prihláste sa zadaním svojej emailovej adresy",
   "signin.message.emaildisabled": "Správca zakázal overovanie emailu. Ak máte účet správcu a potrebujete obísť toto obmedzenie, <0>kliknite sem</0>.",
   "signin.message.emailsent": "Práve sme odoslali potvrdzovací odkaz na adresu <0>{email}</0>. Kliknite na odkaz a budete prihlásení.",
+  "signin.message.ldap": "Connect using your LDAP account",
   "signin.message.locked.text": "Ak chcete túto stránku znova aktivovať, prihláste sa pomocou účtu správcu a aktualizujte požadované nastavenia.",
   "signin.message.locked.title": "<0>{0}</0> je momentálne zamknutý.",
   "signin.message.onlyadmins": "V súčasnosti je povolené iba prihlásenie do účtu správcu",
   "signin.message.private.text": "Ak máte účet alebo pozvánku, na prihlásenie môžete použiť nasledujúce možnosti.",
   "signin.message.private.title": "<0>{0}</0> je súkromný priestor a vyžaduje si pozvánku, aby ste sa k nemu mohli pridať.",
+  "signin.select.ldap": "LDAP server",
   "{count, plural, one {# tag} other {# tags}}": "{count, plural, one {# tag} other {# tags}}"
 }

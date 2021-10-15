@@ -1,0 +1,55 @@
+dn: uid=developer,dc=example,dc=org
+changetype: add
+objectClass: inetOrgPerson
+cn: developer
+givenName: developer
+sn: Developer
+displayName: Developer User
+mail: developer@example.org
+userPassword: developer_password
+uid: developer
+
+dn: uid=maintainer,dc=example,dc=org
+changetype: add
+objectClass: inetOrgPerson
+cn: maintainer
+givenName: maintainer
+sn: Maintainer
+displayName: Maintainer User
+mail: maintainer@example.org
+userPassword: maintainer_password
+uid: maintainer
+
+dn: uid=administrator,dc=example,dc=org
+changetype: add
+objectClass: inetOrgPerson
+cn: administrator
+givenName: administrator
+sn: administrator
+displayName: Administrator User
+mail: administrator@example.org
+userPassword: administrator_password
+uid: administrator
+
+dn: ou=Groups,dc=example,dc=org
+changetype: add
+objectClass: organizationalUnit
+ou: Groups
+
+dn: ou=Users,dc=example,dc=org
+changetype: add
+objectClass: organizationalUnit
+ou: Users
+
+dn: cn=Admins,ou=Groups,dc=example,dc=org
+changetype: add
+cn: Admins
+objectClass: groupOfUniqueNames
+uniqueMember: uid=administrator,dc=example,dc=org
+
+dn: cn=Maintainers,ou=Groups,dc=example,dc=org
+changetype: add
+cn: Maintainers
+objectClass: groupOfUniqueNames
+uniqueMember: uid=maintainer,dc=example,dc=org
+uniqueMember: uid=developer,dc=example,dc=org

@@ -128,10 +128,12 @@
   "signin.message.email": "Введите ваш адрес электронной почты, чтобы войти",
   "signin.message.emaildisabled": "Аутентификация по адресу электронной почты отключена. <0>Я администратор и мне нужно обойти это ограничение</0>.",
   "signin.message.emailsent": "Мы отправили ссылку для подтверждения на <0>{email}</0>. Перейдите по ней, чтобы войти.",
+  "signin.message.ldap": "Connect using your LDAP account",
   "signin.message.locked.text": "Чтобы заново активировать этот сайт, войдите с аккаунта администратора и обновите соответствующие настройки.",
   "signin.message.locked.title": "<0>{0}</0> сейчас заблокирован.",
   "signin.message.onlyadmins": "Сейчас войти можно только с аккаунта администратора",
   "signin.message.private.text": "Если у вас есть аккаунт или приглашение, вы можете использовать их для входа.",
   "signin.message.private.title": "<0>{0}</0> - приватный сайт. Вам нужно приглашение, чтобы присоединиться к нему.",
+  "signin.select.ldap": "LDAP server",
   "{count, plural, one {# tag} other {# tags}}": "{count, plural, one {# tag} other {# tags}}"
 }

@@ -2,8 +2,9 @@ package actions
 
 import (
 	"context"
-	"github.com/getfider/fider/app"
 
+	"github.com/getfider/fider/app"
+	"github.com/getfider/fider/app/models/cmd"
 	"github.com/getfider/fider/app/models/entity"
 	"github.com/getfider/fider/app/models/enum"
 	"github.com/getfider/fider/app/models/query"
@@ -111,6 +112,47 @@ func (action *CompleteProfile) Validate(ctx context.Context, user *entity.User) 
 		} else {
 			result.AddFieldFailure("key", propertyIsInvalid(ctx, "key"))
 		}
+	}
+
+	return result
+}
+
+// SignInWithLdap happens when user request to sign in with ldap
+type SignInByLdap struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+	Provider string `json:"provider"`
+}
+
+func NewSignInByLdap() *SignInByLdap {
+	return &SignInByLdap{}
+}
+
+// IsAuthorized returns true if current user is authorized to perform this action
+func (action *SignInByLdap) IsAuthorized(ctx context.Context, user *entity.User) bool {
+	return true
+}
+
+// Validate if current model is valid
+func (action *SignInByLdap) Validate(ctx context.Context, user *entity.User) *validate.Result {
+
+	result := validate.Success()
+
+	if action.Username == "" {
+		result.AddFieldFailure("ldapUsername", propertyIsRequired(ctx, "username"))
+		return result
+	}
+
+	if action.Password == "" {
+		result.AddFieldFailure("ldapPassword", propertyIsRequired(ctx, "password"))
+		return result
+	}
+
+	// should this be a query instead of a command ?
+	verify := &cmd.VerifyLdapUser{Provider: action.Provider, Username: action.Username, Password: action.Password}
+
+	if err := bus.Dispatch(ctx, verify); err != nil {
+		result.AddFieldFailure("ldapPassword", propertyIsInvalid(ctx, "login"))
 	}
 
 	return result

@@ -7,6 +7,7 @@ go 1.17
 require (
 	github.com/aws/aws-sdk-go v1.40.9
 	github.com/cosmtrek/air v1.27.3
+	github.com/go-ldap/ldap/v3 v3.4.1
 	github.com/goenning/imagic v0.0.1
 	github.com/goenning/letteravatar v0.0.0-20180605200324-553181ed4055
 	github.com/golang-jwt/jwt/v4 v4.0.0
@@ -31,6 +32,7 @@ require (
 
 require (
 	4d63.com/gochecknoglobals v0.0.0-20201008074935-acfc0b28355a // indirect
+	github.com/Azure/go-ntlmssp v0.0.0-20200615164410-66371956d46c // indirect
 	github.com/BurntSushi/toml v0.3.1 // indirect
 	github.com/Djarvur/go-err113 v0.0.0-20210108212216-aea10b59be24 // indirect
 	github.com/Masterminds/semver v1.5.0 // indirect
@@ -56,6 +58,7 @@ require (
 	github.com/fatih/structtag v1.2.0 // indirect
 	github.com/fsnotify/fsnotify v1.4.9 // indirect
 	github.com/fzipp/gocyclo v0.3.1 // indirect
+	github.com/go-asn1-ber/asn1-ber v1.5.1 // indirect
 	github.com/go-critic/go-critic v0.5.6 // indirect
 	github.com/go-toolsmith/astcast v1.0.0 // indirect
 	github.com/go-toolsmith/astcopy v1.0.0 // indirect

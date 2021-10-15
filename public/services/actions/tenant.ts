@@ -1,5 +1,5 @@
 import { http, Result } from "@fider/services/http"
-import { UserRole, OAuthConfig, ImageUpload } from "@fider/models"
+import { UserRole, OAuthConfig, ImageUpload, LdapConfig } from "@fider/models"
 
 export interface CheckAvailabilityResponse {
   message: string
@@ -61,6 +61,16 @@ export const signIn = async (email: string): Promise<Result> => {
   })
 }
 
+/* LDAP Signin */
+
+export const ldapSignIn = async (username: string, password: string, provider: string): Promise<Result> => {
+  return await http.post("/_api/ldap/signin", {
+    username,
+    password,
+    provider
+  });
+};
+
 export const completeProfile = async (key: string, name: string): Promise<Result> => {
   return await http.post("/_api/signin/complete", {
     key,
@@ -105,3 +115,35 @@ export interface CreateEditOAuthConfigRequest {
 export const saveOAuthConfig = async (request: CreateEditOAuthConfigRequest): Promise<Result> => {
   return await http.post("/_api/admin/oauth", request)
 }
+
+/* LDAP exports */
+
+export const getLdapConfig = async (provider: string): Promise<Result<LdapConfig>> => {
+  return await http.get<LdapConfig>(`/_api/admin/ldap/${provider}`);
+};
+
+export interface CreateEditLdapConfigRequest {
+  provider: string;
+  displayName: string;
+  status: number;
+  protocol: number;
+  certCheck: boolean;
+  ldapHostname: string;
+  ldapPort: string;
+  bindUsername: string;
+  bindPassword: string;
+  rootDN: string;
+  scope: number;
+  userSearchFilter: string;
+  usernameLdapAttribute: string;
+  nameLdapAttribute: string;
+  mailLdapAttribute: string;
+}
+
+export const saveLdapConfig = async (request: CreateEditLdapConfigRequest): Promise<Result> => {
+  return await http.post("/_api/admin/ldap", request);
+};
+
+export const testLdapServer = async (provider: string): Promise<Result> => {
+  return await http.get(`/_api/admin/ldap/${provider}/test`);
+};

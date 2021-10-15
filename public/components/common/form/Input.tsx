@@ -25,6 +25,8 @@ interface InputProps {
   onFocus?: () => void
   inputRef?: React.MutableRefObject<any>
   onChange?: (value: string) => void
+  // Adding password 
+  password?: boolean;
 }
 
 export const Input: React.FunctionComponent<InputProps> = (props) => {
@@ -62,7 +64,8 @@ export const Input: React.FunctionComponent<InputProps> = (props) => {
                 "c-input--suffixed": !!suffix,
               })}
               id={`input-${props.field}`}
-              type="text"
+              // Adding password
+              type={props.password ? "password" : "text"}
               autoComplete={props.autoComplete}
               tabIndex={props.noTabFocus ? -1 : undefined}
               ref={props.inputRef}

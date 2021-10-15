@@ -128,10 +128,12 @@
   "signin.message.email": "Voer jouw e-mailadres in om in te loggen",
   "signin.message.emaildisabled": "Inloggen met e-mail is uitgeschakeld door een beheerder. Als u een beheerder account heeft en deze beperking moet omzeilen, <0>klik dan hier</0>.",
   "signin.message.emailsent": "We hebben zojuist een bevestigingslink gestuurd naar <0>{email}</0>. Klik op de link om in te loggen.",
+  "signin.message.ldap": "Connect using your LDAP account",
   "signin.message.locked.text": "Meld aan met een beheerdersaccount en werk de vereiste instellingen bij, om deze site opnieuw te activeren.",
   "signin.message.locked.title": "<0>{0}</0> is momenteel vergrendeld.",
   "signin.message.onlyadmins": "Momenteel alleen toegestaan om in te loggen met een beheerdersaccount",
   "signin.message.private.text": "Als je een account of een uitnodiging hebt, kun je de volgende methodes gebruiken om in te loggen.",
   "signin.message.private.title": "<0>{0}</0> is een privéruimte en vereist een uitnodiging om deel te kunnen nemen.",
+  "signin.select.ldap": "LDAP server",
   "{count, plural, one {# tag} other {# tags}}": "{count, plural, one {# tag} other {# tags}}"
 }

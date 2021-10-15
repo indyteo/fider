@@ -196,6 +196,18 @@ func (r *Renderer) Render(w io.Writer, statusCode int, templateName string, prop
 		}
 	}
 
+	// Adding LDAP providers
+
+	ldapProviders := &query.ListActiveLdapProviders{
+		Result: make([]*dto.LdapProviderOption, 0),
+	}
+	if !ctx.IsAuthenticated() && statusCode >= 200 && statusCode < 300 {
+		err = bus.Dispatch(ctx, ldapProviders)
+		if err != nil {
+			panic(errors.Wrap(err, "failed to get list of providers"))
+		}
+	}
+
 	public["contextID"] = ctx.ContextID()
 	public["sessionID"] = ctx.SessionID()
 	public["tenant"] = tenant
@@ -211,6 +223,7 @@ func (r *Renderer) Render(w io.Writer, statusCode int, templateName string, prop
 		"baseURL":          ctx.BaseURL(),
 		"assetsURL":        AssetsURL(ctx, ""),
 		"oauth":            oauthProviders.Result,
+		"ldap":             ldapProviders.Result,
 	}
 
 	if ctx.IsAuthenticated() {

@@ -1,8 +1,8 @@
 import "./SignInControl.scss"
 
 import React, { useState } from "react"
-import { SocialSignInButton, Form, Button, Input, Message } from "@fider/components"
-import { Divider } from "@fider/components/layout"
+import { SocialSignInButton, Form, Button, Input, Message, Select, SelectOption} from "@fider/components"
+import { Divider, HStack } from "@fider/components/layout"
 import { device, actions, Failure, isCookieEnabled } from "@fider/services"
 import { useFider } from "@fider/hooks"
 import { Trans } from "@lingui/macro"
@@ -15,9 +15,16 @@ interface SignInControlProps {
 
 export const SignInControl: React.FunctionComponent<SignInControlProps> = (props) => {
   const fider = useFider()
+  const oauthProvidersLen = fider.settings.oauth.length;
+  const ldapProvidersLen = fider.settings.ldap.length;
   const [showEmailForm, setShowEmailForm] = useState(fider.session.tenant ? fider.session.tenant.isEmailAuthAllowed : true)
   const [email, setEmail] = useState("")
+  const [username, setUsername] = useState("");
+  const [password, setPassword] = useState("");
+
   const [error, setError] = useState<Failure | undefined>(undefined)
+  const [ldapError, setLdapError] = useState<Failure | undefined>(undefined);
+  const [ldapProvider, _setLdapProvider] = useState((ldapProvidersLen > 0 && fider.settings.ldap[0].provider) || "");
 
   const forceShowEmailForm = (e: React.MouseEvent<HTMLAnchorElement>) => {
     e.preventDefault()
@@ -37,7 +44,20 @@ export const SignInControl: React.FunctionComponent<SignInControlProps> = (props
     }
   }
 
-  const providersLen = fider.settings.oauth.length
+  const ldapSignIn = async () => {
+    const result = await actions.ldapSignIn(username, password, ldapProvider);
+    if (result.ok) {
+      location.reload();
+    } else if (result.error) {
+      setLdapError(result.error);
+    }
+  };
+
+  const setLdapProvider = (opt?: SelectOption) => {
+    if(opt) {
+      _setLdapProvider(opt.value);
+    }
+}
 
   if (!isCookieEnabled()) {
     return (
@@ -50,7 +70,51 @@ export const SignInControl: React.FunctionComponent<SignInControlProps> = (props
 
   return (
     <div className="c-signin-control">
-      {providersLen > 0 && (
+
+      {ldapProvidersLen > 0 && (
+        <>
+          <div className="l-signin-ldap">
+          <p className="text-muted">
+            <Trans id="signin.message.ldap">Connect using your LDAP account</Trans>
+          </p>
+          <Form error={ldapError}>
+            <Input
+              field="ldapUsername"
+              value={username}
+              placeholder="username"
+              onChange={setUsername}
+            />
+            <Input
+              field="ldapPassword"
+              value={password}
+              placeholder="password"
+              onChange={setPassword}
+              password={true}
+            />
+            <HStack justify="full" center={true} >
+              <span className="text-category">
+                <Trans id="signin.select.ldap">LDAP server</Trans>
+              </span>
+              <Select 
+                field="ldapprovider"
+                defaultValue={ldapProvider}
+                options={fider.settings.ldap.map(x => ({
+                  value: x.provider,
+                  label: x.displayName,
+                }))}
+                onChange={setLdapProvider}
+              />
+            </HStack>
+            <Button variant="primary" disabled={username === "" || password === ""} onClick={ldapSignIn}>
+              Sign In
+            </Button>
+          </Form>
+          </div>
+          {(props.useEmail || oauthProvidersLen > 0) && <Divider />}
+        </>
+      )}
+
+      {oauthProvidersLen > 0 && (
         <>
           <div className="c-signin-control__oauth mb-2">
             {fider.settings.oauth.map((o) => (

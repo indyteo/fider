@@ -7,6 +7,7 @@ export const fiderMock = {
       settings: {
         environment: "development",
         oauth: [],
+        ldap: [],
       },
       tenant: {},
       user: undefined,
@@ -17,6 +18,7 @@ export const fiderMock = {
       settings: {
         environment: "development",
         oauth: [],
+        ldap: [],
       },
       tenant: {},
       user: {

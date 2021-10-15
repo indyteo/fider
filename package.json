@@ -66,7 +66,8 @@
         "path": "<rootDir>/locale/{locale}/client",
         "include": [
           "<rootDir>"
-        ]
+        ],
+        "exclude": ["**/data/postgres/**"]
       }
     ],
     "fallbackLocales": {

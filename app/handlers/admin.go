@@ -137,8 +137,9 @@ func ManageMembers() web.HandlerFunc {
 // ManageAuthentication is the page used by administrators to change site authentication settings
 func ManageAuthentication() web.HandlerFunc {
 	return func(c *web.Context) error {
-		listProviders := &query.ListAllOAuthProviders{}
-		if err := bus.Dispatch(c, listProviders); err != nil {
+		listOauthProviders := &query.ListAllOAuthProviders{}
+		listLdapProviders := &query.ListAllLdapProviders{}
+		if err := bus.Dispatch(c, listOauthProviders, listLdapProviders); err != nil {
 			return c.Failure(err)
 		}
 
@@ -146,7 +147,8 @@ func ManageAuthentication() web.HandlerFunc {
 			Title:     "Authentication · Site Settings",
 			ChunkName: "ManageAuthentication.page",
 			Data: web.Map{
-				"providers": listProviders.Result,
+				"oauthProviders": listOauthProviders.Result,
+				"ldapProviders":  listLdapProviders.Result,
 			},
 		})
 	}
@@ -197,6 +199,65 @@ func SaveOAuthConfig() web.HandlerFunc {
 			},
 		); err != nil {
 			return c.Failure(err)
+		}
+
+		return c.Ok(web.Map{})
+	}
+}
+
+// GetOAuthConfig returns OAuth config based on given provider
+func GetLdapConfig() web.HandlerFunc {
+	return func(c *web.Context) error {
+		getConfig := &query.GetCustomLdapConfigByProvider{
+			Provider: c.Param("provider"),
+		}
+		if err := bus.Dispatch(c, getConfig); err != nil {
+			return c.Failure(err)
+		}
+
+		return c.Ok(getConfig.Result)
+	}
+}
+
+// SaveLdapConfig is used to create/edit Ldap configurations
+func SaveLdapConfig() web.HandlerFunc {
+	return func(c *web.Context) error {
+		action := actions.NewCreateEditLdapConfig()
+		if result := c.BindTo(action); !result.Ok {
+			return c.HandleValidation(result)
+		}
+		if err := bus.Dispatch(c,
+			&cmd.SaveCustomLdapConfig{
+				ID:                    action.ID,
+				Provider:              action.Provider,
+				DisplayName:           action.DisplayName,
+				Status:                action.Status,
+				Protocol:              action.Protocol,
+				CertCheck:             action.CertCheck,
+				LdapHostname:          action.LdapHostname,
+				LdapPort:              action.LdapPort,
+				BindUsername:          action.BindUsername,
+				BindPassword:          action.BindPassword,
+				RootDN:                action.RootDN,
+				Scope:                 action.Scope,
+				UserSearchFilter:      action.UserSearchFilter,
+				UsernameLdapAttribute: action.UsernameLdapAttribute,
+				NameLdapAttribute:     action.NameLdapAttribute,
+				MailLdapAttribute:     action.MailLdapAttribute,
+			},
+		); err != nil {
+			return c.Failure(err)
+		}
+		return c.Ok(web.Map{})
+	}
+}
+
+// TestLdapServer is used to test an LDAP provider
+func TestLdapServer() web.HandlerFunc {
+	return func(c *web.Context) error {
+		testLdapServer := &cmd.TestLdapServer{Provider: c.Param("provider")}
+		if err := bus.Dispatch(c, testLdapServer); err != nil {
+			return c.GatewayTimeout()
 		}
 
 		return c.Ok(web.Map{})

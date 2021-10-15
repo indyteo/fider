@@ -101,6 +101,7 @@ func routes(r *web.Engine) *web.Engine {
 	r.Get("/invite/verify", handlers.VerifySignInKey(enum.EmailVerificationKindUserInvitation))
 	r.Post("/_api/signin/complete", handlers.CompleteSignInProfile())
 	r.Post("/_api/signin", handlers.SignInByEmail())
+	r.Post("/_api/ldap/signin", handlers.SignInByLdap())
 
 	//Block if it's a locked tenant with a non-administrator user
 	r.Use(middlewares.BlockLockedTenants())
@@ -158,6 +159,8 @@ func routes(r *web.Engine) *web.Engine {
 		ui.Get("/admin/tags", handlers.ManageTags())
 		ui.Get("/admin/authentication", handlers.ManageAuthentication())
 		ui.Get("/_api/admin/oauth/:provider", handlers.GetOAuthConfig())
+		ui.Get("/_api/admin/ldap/:provider", handlers.GetLdapConfig())
+		ui.Get("/_api/admin/ldap/:provider/test", handlers.TestLdapServer())
 
 		//From this step, only Administrators are allowed
 		ui.Use(middlewares.IsAuthorized(enum.RoleAdministrator))
@@ -180,6 +183,7 @@ func routes(r *web.Engine) *web.Engine {
 		ui.Post("/_api/admin/roles/:role/users", handlers.ChangeUserRole())
 		ui.Put("/_api/admin/users/:userID/block", handlers.BlockUser())
 		ui.Delete("/_api/admin/users/:userID/block", handlers.UnblockUser())
+		ui.Post("/_api/admin/ldap", handlers.SaveLdapConfig())
 
 		if env.IsBillingEnabled() {
 			ui.Get("/admin/billing", handlers.ManageBilling())

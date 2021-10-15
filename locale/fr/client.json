@@ -128,10 +128,12 @@
   "signin.message.email": "Entrez votre adresse e-mail pour vous connecter",
   "signin.message.emaildisabled": "L'authentification par e-mail a été désactivée par un administrateur. Si vous avez un compte administrateur, <0>cliquez ici</0> pour vous connecter.",
   "signin.message.emailsent": "Nous venons d'envoyer un lien de confirmation à <0>{email}</0>. Cliquez sur le lien et vous serez connecté.",
+  "signin.message.ldap": "Connect using your LDAP account",
   "signin.message.locked.text": "Pour réactiver ce site, connectez-vous avec un compte administrateur et mettez à jour les paramètres requis.",
   "signin.message.locked.title": "<0>{0}</0> est actuellement verrouillé.",
   "signin.message.onlyadmins": "Seuls les comptes administrateurs peuvent se connecter en ce moment",
   "signin.message.private.text": "Si vous avez un compte ou une invitation, vous pouvez utiliser les options suivantes pour vous connecter.",
   "signin.message.private.title": "<0>{0}</0> est un espace privé et nécessite une invitation pour le rejoindre.",
+  "signin.select.ldap": "LDAP server",
   "{count, plural, one {# tag} other {# tags}}": "{count, plural, one {# tag} other {# tags}}"
 }

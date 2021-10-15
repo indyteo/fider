@@ -1,8 +1,9 @@
 import React from "react"
 
 import { Button, OAuthProviderLogo, Icon, Field, Toggle, Form } from "@fider/components"
-import { OAuthConfig, OAuthProviderOption } from "@fider/models"
+import { OAuthConfig, OAuthProviderOption, LdapConfig, LdapProviderOption } from "@fider/models"
 import { OAuthForm } from "../components/OAuthForm"
+import { LdapForm } from "../components/LdapForm"
 import { actions, notify, Fider, Failure } from "@fider/services"
 import { AdminBasePage } from "../components/AdminBasePage"
 
@@ -12,14 +13,17 @@ import IconPencilAlt from "@fider/assets/images/heroicons-pencil-alt.svg"
 import { HStack, VStack } from "@fider/components/layout"
 
 interface ManageAuthenticationPageProps {
-  providers: OAuthProviderOption[]
+  oauthProviders: OAuthProviderOption[];
+  ldapProviders: LdapProviderOption[];
 }
 
 interface ManageAuthenticationPageState {
-  isAdding: boolean
+  isAddingOauth: boolean
+  isAddingLdap: boolean
+  editingOauth?: OAuthConfig
+  editingLdap?: LdapConfig
   isEmailAuthAllowed: boolean
   canDisableEmailAuth: boolean
-  editing?: OAuthConfig
   error?: Failure
 }
 
@@ -32,32 +36,65 @@ export default class ManageAuthenticationPage extends AdminBasePage<ManageAuthen
   constructor(props: ManageAuthenticationPageProps) {
     super(props)
     this.state = {
-      isAdding: false,
+      isAddingOauth: false,
+      isAddingLdap: false,
       isEmailAuthAllowed: Fider.session.tenant.isEmailAuthAllowed,
-      canDisableEmailAuth: props.providers.map((o) => o.isEnabled).reduce((a, b) => a || b, false),
+      // TODO: Validate this
+      canDisableEmailAuth: props.oauthProviders.map((o) => o.isEnabled).reduce((a, b) => a || b, false) || props.ldapProviders.map((o) => o.isEnabled).reduce((a, b) => a || b, false),
     }
   }
 
-  private addNew = async () => {
-    this.setState({ isAdding: true, editing: undefined })
+  /* OAUTH */
+
+  private addNewOauth = async () => {
+    this.setState({ isAddingOauth: true, editingOauth: undefined })
   }
 
-  private edit = async (provider: string) => {
+  private editOauth = async (provider: string) => {
     const result = await actions.getOAuthConfig(provider)
     if (result.ok) {
-      this.setState({ editing: result.data, isAdding: false })
+      this.setState({ editingOauth: result.data, isAddingOauth: false })
     } else {
       notify.error("Failed to retrieve OAuth configuration. Try again later")
     }
   }
 
-  private startTest = async (provider: string) => {
+  private startTestOauth = async (provider: string) => {
     const redirect = `${Fider.settings.baseURL}/oauth/${provider}/echo`
     window.open(`/oauth/${provider}?redirect=${redirect}`, "oauth-test", "width=1100,height=600,status=no,menubar=no")
   }
 
-  private cancel = async () => {
-    this.setState({ isAdding: false, editing: undefined })
+  private cancelOauth = async () => {
+    this.setState({ isAddingOauth: false, editingOauth: undefined })
+  }
+
+  /* LDAP */
+
+  private addNewLdap = async () => {
+    this.setState({ isAddingLdap: true, editingLdap: undefined })
+  }
+
+  private editLdap = async (provider: string) => {
+    const result = await actions.getLdapConfig(provider)
+    if (result.ok) {
+      this.setState({ editingLdap: result.data, isAddingLdap: false })
+    } else {
+      notify.error("Failed to retrieve Ldap configuration. Try again later")
+    }
+  }
+
+  private startTestLdap = async (provider: string, displayName: string) => {
+    const result = await actions.testLdapServer(provider);
+    if (result.ok)
+    {
+      notify.success("Success ! "+displayName+" is a valid LDAP server.")
+    } else {
+      notify.error(displayName+" is not available. Please review LDAP configuration")
+    }
+  };
+
+  private cancelLdap = async () => {
+    this.setState({ isAddingLdap: false, editingLdap: undefined })
   }
 
   private toggleEmailAuth = async (active: boolean) => {
@@ -82,21 +119,35 @@ export default class ManageAuthenticationPage extends AdminBasePage<ManageAuthen
     )
   }
 
+
   public content() {
     let enabledProvidersCount = 0
-    for (const o of this.props.providers) {
+    for (const o of this.props.ldapProviders) {
+      if (o.isEnabled) {
+        enabledProvidersCount++
+      }
+    }
+    for (const o of this.props.oauthProviders) {
       if (o.isEnabled) {
         enabledProvidersCount++
       }
     }
     const cantDisable = !this.state.isEmailAuthAllowed && enabledProvidersCount == 1
 
-    if (this.state.isAdding) {
-      return <OAuthForm cantDisable={cantDisable} onCancel={this.cancel} />
+    if (this.state.isAddingOauth) {
+      return <OAuthForm cantDisable={cantDisable} onCancel={this.cancelOauth} />
     }
 
-    if (this.state.editing) {
-      return <OAuthForm cantDisable={cantDisable} config={this.state.editing} onCancel={this.cancel} />
+    if (this.state.editingOauth) {
+      return <OAuthForm cantDisable={cantDisable} config={this.state.editingOauth} onCancel={this.cancelOauth} />
+    }
+
+    if (this.state.isAddingLdap) {
+      return <LdapForm cantDisable={cantDisable} onCancel={this.cancelLdap} />
+    }
+
+    if (this.state.editingLdap) {
+      return <LdapForm cantDisable={cantDisable} config={this.state.editingLdap} onCancel={this.cancelLdap} />
     }
 
     const enabled = <span className="text-green-700">Enabled</span>
@@ -127,6 +178,47 @@ export default class ManageAuthenticationPage extends AdminBasePage<ManageAuthen
             </Field>
           </Form>
         </div>
+
+        <div>
+        <h2 className="text-display">LDAP Providers</h2>
+        <p>
+          You can use these section to add any authentication provider thats supports the LDAP protocol.
+        </p>
+        <VStack spacing={6}>
+        {this.props.ldapProviders.map((o) => (
+          <div key={o.provider}>
+          <HStack justify="between">
+            <HStack className="h-6">
+              <strong>{o.displayName}</strong>
+            </HStack>
+            {(
+              <HStack>
+                {Fider.session.user.isAdministrator && (
+                  <Button onClick={this.editLdap.bind(this, o.provider)} size="small">
+                    <Icon sprite={IconPencilAlt} />
+                    <span>Edit</span>
+                  </Button>
+                )}
+                <Button onClick={this.startTestLdap.bind(this, o.provider, o.displayName)} size="small">
+                  <Icon sprite={IconPlay} />
+                  <span>Test</span>
+                </Button>
+              </HStack>
+            )}
+          </HStack>
+          <div className="text-xs block my-1">{o.isEnabled ? enabled : disabled}</div>
+        </div>
+        ))}
+        <div>
+          {Fider.session.user.isAdministrator && (
+            <Button variant="secondary" onClick={this.addNewLdap}>
+                Add new LDAP server
+            </Button>
+          )}
+        </div>
+        </VStack>
+        </div>
+
         <div>
           <h2 className="text-display">OAuth Providers</h2>
           <p>
@@ -137,7 +229,7 @@ export default class ManageAuthenticationPage extends AdminBasePage<ManageAuthen
             .
           </p>
           <VStack spacing={6}>
-            {this.props.providers.map((o) => (
+            {this.props.oauthProviders.map((o) => (
               <div key={o.provider}>
                 <HStack justify="between">
                   <HStack className="h-6">
@@ -147,12 +239,12 @@ export default class ManageAuthenticationPage extends AdminBasePage<ManageAuthen
                   {o.isCustomProvider && (
                     <HStack>
                       {Fider.session.user.isAdministrator && (
-                        <Button onClick={this.edit.bind(this, o.provider)} size="small">
+                        <Button onClick={this.editOauth.bind(this, o.provider)} size="small">
                           <Icon sprite={IconPencilAlt} />
                           <span>Edit</span>
                         </Button>
                       )}
-                      <Button onClick={this.startTest.bind(this, o.provider)} size="small">
+                      <Button onClick={this.startTestOauth.bind(this, o.provider)} size="small">
                         <Icon sprite={IconPlay} />
                         <span>Test</span>
                       </Button>
@@ -170,8 +262,8 @@ export default class ManageAuthenticationPage extends AdminBasePage<ManageAuthen
             ))}
             <div>
               {Fider.session.user.isAdministrator && (
-                <Button variant="secondary" onClick={this.addNew}>
-                  Add new
+                <Button variant="secondary" onClick={this.addNewOauth}>
+                  Add new Oauth server
                 </Button>
               )}
             </div>

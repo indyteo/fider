@@ -8,6 +8,8 @@
   "property.title": "Rubrik",
   "property.comment": "Kommentar",
   "property.status": "Status",
+  "property.username": "Username",
+  "property.password": "Password",
   "validation.required": "{name} måste fyllas i.",
   "validation.invalid": "{name} är ogiltigt.",
   "validation.invalidvalue": "{name} har ett ogiltigt värde '{value}'.",

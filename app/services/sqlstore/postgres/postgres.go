@@ -118,6 +118,11 @@ func (s Service) Init() {
 	bus.AddHandler(getCustomOAuthConfigByProvider)
 	bus.AddHandler(saveCustomOAuthConfig)
 
+	// Adding LDAP handlers
+	bus.AddHandler(listCustomLdapConfig)
+	bus.AddHandler(saveCustomLdapConfig)
+	bus.AddHandler(getCustomLdapConfigByProvider)
+
 	bus.AddHandler(getWebhook)
 	bus.AddHandler(listAllWebhooks)
 	bus.AddHandler(listAllWebhooksByType)

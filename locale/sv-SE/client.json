@@ -128,10 +128,12 @@
   "signin.message.email": "Ange din e-postadress för att logga in",
   "signin.message.emaildisabled": "E-postautentisering har inaktiverats av en administratör. Om du har ett administratörskonto och behöver kringgå denna begränsning, <0>klicka här</0>.",
   "signin.message.emailsent": "Vi har skickat en bekräftelselänk till <0>{email}</0>. Klicka på länken för att logga in.",
+  "signin.message.ldap": "Connect using your LDAP account",
   "signin.message.locked.text": "För att återaktivera denna webbplats, logga in med ett administratörskonto och uppdatera nödvändiga inställningar.",
   "signin.message.locked.title": "<0>{0}</0> är för närvarande låst.",
   "signin.message.onlyadmins": "För närvarande endast tillåtet att logga in med ett administratörskonto",
   "signin.message.private.text": "Om du har ett konto eller en inbjudan kan du använda följande alternativ för att logga in.",
   "signin.message.private.title": "<0>{0}</0> är ett privat utrymme och kräver en inbjudan för att ansluta till det.",
+  "signin.select.ldap": "LDAP server",
   "{count, plural, one {# tag} other {# tags}}": "{count, plural, =1 {# etikett} other {# etiketter}}"
 }

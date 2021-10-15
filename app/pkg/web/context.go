@@ -258,6 +258,14 @@ func (c *Context) Failure(err error) error {
 	return err
 }
 
+//GatewayTimeout returns a 504 page
+func (c *Context) GatewayTimeout() error {
+	return c.Render(http.StatusGatewayTimeout, "504.html", Props{
+		Title:       "Gateway Timeout",
+		Description: "Fider didn't receive a timely response from another server.",
+	})
+}
+
 //HandleValidation handles given validation result property to return 400 or 500
 func (c *Context) HandleValidation(result *validate.Result) error {
 	if result.Err != nil {

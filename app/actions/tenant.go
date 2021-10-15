@@ -2,6 +2,7 @@ package actions
 
 import (
 	"context"
+
 	"github.com/getfider/fider/app/models/query"
 	"github.com/getfider/fider/app/pkg/bus"
 
@@ -219,12 +220,19 @@ func (action *UpdateTenantEmailAuthAllowed) IsAuthorized(ctx context.Context, us
 func (action *UpdateTenantEmailAuthAllowed) Validate(ctx context.Context, user *entity.User) *validate.Result {
 	result := validate.Success()
 
-	activeProviders := &query.ListActiveOAuthProviders{}
-	if err := bus.Dispatch(ctx, activeProviders); err != nil {
+	activeOauthProviders := &query.ListActiveOAuthProviders{}
+	if err := bus.Dispatch(ctx, activeOauthProviders); err != nil {
 		return validate.Failed("Cannot retrieve OAuth providers")
 	}
 
-	if len(activeProviders.Result) == 0 {
+	// Adding LDAP
+	activeLdapProviders := &query.ListActiveLdapProviders{}
+	if err := bus.Dispatch(ctx, activeLdapProviders); err != nil {
+		return validate.Failed("Cannot retrieve Ldap providers")
+	}
+
+	// Adding LDAP
+	if len(activeOauthProviders.Result) == 0 && len(activeLdapProviders.Result) == 0 {
 		result.AddFieldFailure("isEmailAuthAllowed", "You cannot disable email authentication without any other provider enabled.")
 	}
 
