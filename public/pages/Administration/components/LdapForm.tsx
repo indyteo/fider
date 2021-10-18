@@ -167,7 +167,7 @@ export const LdapForm: React.FC<LdapFormProps> = props => {
                     afterLabel={
                         !bindPasswordEnabled ? (
                         <>
-                            <span className="info">omitted for security reasons</span>
+                            <span className="text-muted"> omitted for security reasons </span>
                             <span className="info clickable" onClick={enableBindPassword}>
                             change
                             </span>
