@@ -11,7 +11,7 @@ services:
     restart: always
     image: postgres:12
     volumes:
-      - ./data/postgres:/var/lib/postgresql/data
+      - pg_data:/var/lib/postgresql/data
     ports:
       - "5555:5432"
     environment:
@@ -39,3 +39,25 @@ services:
       MINIO_ACCESS_KEY: s3user
       MINIO_SECRET_KEY: s3user-s3cr3t
     command: server /data --console-address ":9001"
+  openldap:
+    image: osixia/openldap:1.5.0
+    container_name: fider_openldap
+    command: [--copy-service]
+    tty: true
+    stdin_open: true
+    environment:
+      LDAP_READONLY_USER: "true"
+      LDAP_READONLY_USER_USERNAME: "readonly"
+      LDAP_READONLY_USER_PASSWORD: "readonly_password"
+      LDAP_ADMIN_PASSWORD: "admin_password"
+      LDAP_DOMAIN: "example.org"
+      LDAP_TLS: "true"
+      LDAP_TLS_VERIFY_CLIENT: "try"
+    ports:
+      - "389:389"
+      - "636:636"
+    volumes:
+      - "./bootstrap.ldif:/container/service/slapd/assets/config/bootstrap/ldif/50-bootstrap.ldif"
+
+volumes:
+  pg_data:
